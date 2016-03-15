@@ -1,4 +1,37 @@
 Meteor.methods
+	_s3_start_multipartupload: (ops={}, callback) ->
+		# ops.bucket
+		# ops.path
+		# ops.file_name
+		# ops.file_type
+
+		_.defaults ops,
+			bucket:S3.config.bucket
+
+		check ops,
+			bucket:String
+			path:String
+			file_name:String
+			file_type:String
+
+		params =
+			Bucket: ops.bucket,
+			Key: ops.file_name,
+			ContentType: ops.file_type
+
+		_callback = (mpErr, multipart) ->
+			console.log('test 2')
+			console.log(mpErr, multipart)
+			callback(multipart.UploadId)
+
+		console.log 'test',
+				Bucket: ops.bucket,
+				Key: ops.file_name,
+				ContentType: ops.file_type,
+
+		S3.aws.createMultipartUpload params, _callback
+		
+
 	_s3_sign: (ops={}) ->
 		@unblock()
 		# ops.expiration: the signature expires after x milliseconds | defaults to 30 minutes

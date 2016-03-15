@@ -45,6 +45,8 @@
 				# "sa-east-1"
 		# ops.uploader [DEFAULT: "default"]
 			# key to differentiate multiple uploaders on the same form
+		#ops.multipart [DEFAULT: "null"]
+			# null, or the bucketSize and number of simultaneous uploads
 
 		_.defaults ops,
 			expiration:1800000
@@ -80,7 +82,16 @@
 				status:"signing"
 
 			id = S3.collection.insert initial_file_data
+			
+			xhrId = ops.xhrId || id
+			Meteor.call "_s3_start_multipartupload",
+				path:ops.path
+				file_name: initial_file_data.file.name
+				file_type: initial_file_data.file.type
+				bucket:ops.bucket
 
+
+			return
 			Meteor.call "_s3_sign",
 				path:ops.path
 				file_name: initial_file_data.file.name
@@ -89,6 +100,7 @@
 				acl:ops.acl
 				bucket:ops.bucket
 				expiration:ops.expiration
+				multipart:ops.multipart
 				(error,result) ->
 					if result
 						# Mark as signed
