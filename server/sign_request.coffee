@@ -1,5 +1,5 @@
 Meteor.methods
-	_s3_start_multipartupload: (ops={}, callback) ->
+	_s3_start_multipartupload: (ops={}) ->
 		# ops.bucket
 		# ops.path
 		# ops.file_name
@@ -29,7 +29,11 @@ Meteor.methods
 				Key: ops.file_name,
 				ContentType: ops.file_type,
 
-		S3.aws.createMultipartUpload params, _callback
+		Future = Npm.require('fibers/future');
+		future = new Future()
+		S3.aws.createMultipartUpload params, (e, r) ->
+			future.return(r)
+		return future.wait()
 		
 
 	_s3_sign: (ops={}) ->

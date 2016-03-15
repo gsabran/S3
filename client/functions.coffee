@@ -84,11 +84,14 @@
 			id = S3.collection.insert initial_file_data
 			
 			xhrId = ops.xhrId || id
+
 			Meteor.call "_s3_start_multipartupload",
 				path:ops.path
 				file_name: initial_file_data.file.name
 				file_type: initial_file_data.file.type
 				bucket:ops.bucket
+				(multipart) ->
+					console.log('multipart', multipart)
 
 
 			return
