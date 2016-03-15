@@ -20,11 +20,8 @@ Meteor.methods
 			ContentType: ops.file_type
 
 		_callback = (mpErr, multipart) ->
-			console.log('test 2')
-			console.log(mpErr, multipart)
 			callback(multipart.UploadId)
 
-		console.log 'test',
 				Bucket: ops.bucket,
 				Key: ops.file_name,
 				ContentType: ops.file_type,
@@ -45,13 +42,17 @@ Meteor.methods
 		# ops.file_size
 		# ops.acl
 		# ops.bucket
-
+		i = 0
 		_.defaults ops,
 			expiration:1800000
 			path:""
 			bucket:S3.config.bucket
 			acl:"public-read"
 			region:S3.config.region
+
+		# add default values to pass the test
+		ops.UploadId = ops.UploadId || '';
+		ops.partNumber = ops.partNumber || 0;
 
 		check ops,
 			expiration:Number
@@ -62,6 +63,9 @@ Meteor.methods
 			file_type:String
 			file_name:String
 			file_size:Number
+			UploadId:String
+			partNumber:Number
+
 
 		expiration = new Date Date.now() + ops.expiration
 		expiration = expiration.toISOString()
@@ -71,16 +75,21 @@ Meteor.methods
 		else
 			key = "#{ops.path}/#{ops.file_name}"
 
+		conditions = [
+			["content-length-range",0,ops.file_size]
+			{"key":key}
+			{"bucket":ops.bucket}
+			{"Content-Type":ops.file_type}
+			{"acl":ops.acl}
+			{"Content-Disposition":"inline; filename='#{ops.file_name}'"}
+		]
+		if (ops.UploadId)
+			conditions.push {"PartNumber": ops.PartNumber}
+			conditions.push {"UploadId": ops.UploadId}
+
 		policy =
 			"expiration":expiration
-			"conditions":[
-				["content-length-range",0,ops.file_size]
-				{"key":key}
-				{"bucket":ops.bucket}
-				{"Content-Type":ops.file_type}
-				{"acl":ops.acl}
-				{"Content-Disposition":"inline; filename='#{ops.file_name}'"}
-			]
+			"conditions":conditions
 
 		# Encode the policy
 		policy = Buffer(JSON.stringify(policy), "utf-8").toString("base64")
