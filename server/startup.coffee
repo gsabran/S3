@@ -5,8 +5,8 @@ AWS = Npm.require "aws-sdk"
 #Server side configuration variables
 @S3 =
 	config:{
-	  key: process.env.AWS_ACCESS_KEY_ID,
-	  secret: process.env.AWS_SECRET_ACCESS_KEY,
+	  key: process.env.AWS_KEY_METTA_WEB_SERVER,
+	  secret: process.env.AWS_SECRET_METTA_WEB_SERVER,
 	  bucket: 'mettavr',
 	  denyDelete: true,
 	  region: 'us-east-1', # default
