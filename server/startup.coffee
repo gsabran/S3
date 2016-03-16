@@ -1,6 +1,13 @@
-#Get Knox and AWS libraries
-Knox = Npm.require "knox"
-AWS = Npm.require "aws-sdk"
+# make sure the npm packages have been installed (coffee has no support for ES16 import at the moment...)
+`import { checkNpmVersions } from 'meteor/tmeasday:check-npm-versions';`
+checkNpmVersions({
+  'knox': '0.9.2',
+  'aws-sdk': '2.1.14',
+});
+
+#Get Knox and AWS libraries 
+`import Knox from 'knox';`
+`import AWS from 'aws-sdk';`
 
 #Server side configuration variables
 @S3 =

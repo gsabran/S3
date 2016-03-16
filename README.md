@@ -25,6 +25,8 @@ Star my code in github or atmosphere if you like my code or shoot me a dollar or
 
 ``` sh
 $ meteor add lepozepo:s3
+$ npm install knox --save
+$ npm install aws-sdk --save
 ```
 
 ## Upcoming Feature
