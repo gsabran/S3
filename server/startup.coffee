@@ -4,7 +4,13 @@ AWS = Npm.require "aws-sdk"
 
 #Server side configuration variables
 @S3 =
-	config:{}
+	config:{
+	  key: process.env.AWS_ACCESS_KEY_ID,
+	  secret: process.env.AWS_SECRET_ACCESS_KEY,
+	  bucket: 'mettavr',
+	  denyDelete: true,
+	  region: 'us-east-1', # default
+	}
 	knox:{}
 	aws:{}
 
