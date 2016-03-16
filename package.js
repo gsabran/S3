@@ -1,7 +1,7 @@
 Package.describe({
 	name:"gsabran:s3",
 	summary: "Upload files to S3. Allows use of Knox Server-Side.",
-	version:"5.1.6",
+	version:"5.1.7",
 	git:"https://github.com/Lepozepo/S3"
 });
 
