@@ -1,4 +1,5 @@
 @S3 =
+	runningRequests: {}
 	collection: new Meteor.Collection(null)
 		# file.name
 		# file.type
@@ -7,7 +8,7 @@
 		# total
 		# percent_uploaded
 		# uploader
-		# status: ["signing","uploading","complete"]
+		# status: ["signing","uploading","complete","canceled"]
 		# url
 		# secure_url
 		# relative_url
@@ -45,6 +46,7 @@
 				# "sa-east-1"
 		# ops.uploader [DEFAULT: "default"]
 			# key to differentiate multiple uploaders on the same form
+		# ops.xrhId [DEFAULT: the id of the document that will be created]
 
 		_.defaults ops,
 			expiration:1800000
@@ -80,6 +82,7 @@
 				status:"signing"
 
 			id = S3.collection.insert initial_file_data
+			xhrId = ops.xhrId || id
 
 			Meteor.call "_s3_sign",
 				path:ops.path
@@ -110,6 +113,7 @@
 
 						# Send data
 						xhr = new XMLHttpRequest()
+						S3.runningRequests[xhrId] = { xhr: xhr, id: id }
 
 						xhr.upload.addEventListener "progress", (event) ->
 								S3.collection.update id,
@@ -121,6 +125,7 @@
 							,false
 
 						xhr.addEventListener "load", ->
+							delete S3.runningRequests[xhrId]
 							if xhr.status < 400
 								S3.collection.update id,
 									$set:
@@ -135,9 +140,11 @@
 								callback and callback true,null
 
 						xhr.addEventListener "error", ->
+							delete S3.runningRequests[xhrId]
 							callback and callback true,null
 
 						xhr.addEventListener "abort", ->
+							delete S3.runningRequests[xhrId]
 							console.log "aborted by user"
 
 						xhr.open "POST",result.post_url,true
@@ -145,9 +152,16 @@
 						xhr.send form_data
 					else
 						callback and callback error,null
+			return id
 
 	delete: (path,callback) ->
 		Meteor.call "_s3_delete", path, callback
+
+	cancel: (xhrId) ->
+		req = S3.runningRequests[xhrId]
+		if req
+			req.xhr.abort()
+			S3.collection.update(req.id, {status: 'canceled'});
 
 	b64toBlob: (b64Data, contentType, sliceSize) ->
 		data = b64Data.split("base64,")
