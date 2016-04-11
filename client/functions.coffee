@@ -97,6 +97,7 @@
 				bucket:ops.bucket
 				expiration:ops.expiration
 				(error,result) ->
+					console.log('start upload', error, result, !!ops.progressCallback);
 					if result
 						# Mark as signed
 						S3.collection.update id,
