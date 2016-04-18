@@ -31,5 +31,5 @@ Package.on_use(function (api) {
 	//Allows user access to AWS-SDK
 	api.export && api.export("AWS","server");
 
-	api.export && api.export("S3", 'client');
+	api.export && api.export("S3");
 });
