@@ -1,4 +1,4 @@
-@S3 =
+S3 =
 	runningRequests: {}
 	collection: new Meteor.Collection(null)
 		# file.name

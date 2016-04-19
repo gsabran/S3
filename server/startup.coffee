@@ -3,7 +3,7 @@ Knox = Npm.require "knox"
 AWS = Npm.require "aws-sdk"
 
 #Server side configuration variables
-@S3 =
+S3 =
 	config:{
 	  key: process.env.AWS_KEY_METTA_WEB_SERVER,
 	  secret: process.env.AWS_SECRET_METTA_WEB_SERVER,
