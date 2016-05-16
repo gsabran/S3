@@ -145,11 +145,17 @@ S3 =
 
 								callback and callback null,S3.collection.findOne id
 							else
-								callback and callback true,null
+								callback and callback(
+									{error: new Error('S3 upload request responded with status:' +xhr.status+' text: ' + xhr.responseText), type: 'S3 upload request responded with error status'},
+									null
+								);
 
-						xhr.addEventListener "error", ->
+						xhr.addEventListener "error", (e) ->
 							delete S3.runningRequests[xhrId]
-							callback and callback true,null
+							callback and callback(
+								{error: e, type: 'S3 upload request errored'},
+								null
+							);
 
 						xhr.addEventListener "abort", ->
 							delete S3.runningRequests[xhrId]
@@ -159,7 +165,10 @@ S3 =
 
 						xhr.send form_data
 					else
-						callback and callback error,null
+						callback and callback(
+							{error: error, type: 'Error signing upload request'},
+							null
+						);
 			return id
 
 	delete: (path,callback) ->
