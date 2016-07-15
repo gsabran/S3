@@ -1,6 +1,8 @@
 Meteor.methods
 	_s3_sign: (ops={}) ->
 		@unblock()
+		if !Meteor.user()
+			return;
 		# ops.expiration: the signature expires after x milliseconds | defaults to 30 minutes
 		# ops.path
 		# ops.file_type
