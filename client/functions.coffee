@@ -48,6 +48,7 @@ S3 =
 			# key to differentiate multiple uploaders on the same form
 		# ops.xrhId [DEFAULT: the id of the document that will be created]
 		# ops.progressCallback [DEFAULT: null]
+		# ops.beforeUploadStartCallback [DEFAULT: null]
 
 		_.defaults ops,
 			expiration:1800000
@@ -99,6 +100,9 @@ S3 =
 				(error,result) ->
 					console.log('start upload error:', error);
 					if result
+						if ops.beforeUploadStartCallback
+							ops.beforeUploadStartCallback result.url
+
 						# Mark as signed
 						S3.collection.update id,
 							$set:
