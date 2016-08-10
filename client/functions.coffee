@@ -101,7 +101,7 @@ S3 =
 					console.log('start upload error:', error);
 					if result
 						if ops.beforeUploadStartCallback
-							ops.beforeUploadStartCallback result.url
+							ops.beforeUploadStartCallback result.secure_url
 
 						# Mark as signed
 						S3.collection.update id,
